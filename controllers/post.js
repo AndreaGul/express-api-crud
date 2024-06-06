@@ -27,9 +27,39 @@ const store = async (req, res) => {
   }
 };
 
+const show = async (req, res) => {
+    try {
+        const {slug} = req.params;
+        const post = await prisma.post.findUnique({
+            where:{slug: slug},
+            include: {
+                category: {
+                select: {
+                name: true
+                }
+            },
+            tags: {
+                select: {
+                name: true
+                }
+            }
+            }
+        });
+        if(post){
+            res.json(post);
+        }else{
+            throw new RestError(`Pizza con id ${id} non trovata.`, 404);
+        }
+      
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Errore del server');
+    }
+  };
+
 const index = async (req, res) => {
   try {
-    const where = {};
+   
     const posts = await prisma.post.findMany({
       include: {
         category: {
@@ -55,5 +85,6 @@ const index = async (req, res) => {
 
 module.exports = {
   store,
+  show,
   index
 };
