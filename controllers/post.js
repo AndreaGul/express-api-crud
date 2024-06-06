@@ -59,7 +59,7 @@ const show = async (req, res) => {
 
 const index = async (req, res) => {
   try {
-    const {published}= req.query;
+    const {published,keyword}= req.query;
    const where ={};
     if(published === 'true'){
         where.published = true
@@ -67,6 +67,12 @@ const index = async (req, res) => {
         where.published = false
     }
 
+    if (keyword) {
+        where.OR = [
+          { title: { contains: keyword } }, // Cerca la keyword nel titolo
+          { content: { contains: keyword } }, // Cerca la keyword nel contenuto
+        ];
+      }
     const posts = await prisma.post.findMany({
         where,
         include: {
@@ -82,9 +88,14 @@ const index = async (req, res) => {
             }
         }
     });
-    res.json({
-      posts
-    });
+    if(posts.length === 0){
+        res.json(`Nessun post trovato`);
+    }else{
+        res.json({
+            posts
+          });
+    }
+   
   } catch (err) {
     console.error(err);
     res.status(500).send('Errore del server');
