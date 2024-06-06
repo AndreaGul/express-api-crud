@@ -59,20 +59,28 @@ const show = async (req, res) => {
 
 const index = async (req, res) => {
   try {
-   
+    const {published}= req.query;
+   const where ={};
+    if(published === 'true'){
+        where.published = true
+    }else if(published === 'false'){
+        where.published = false
+    }
+
     const posts = await prisma.post.findMany({
-      include: {
-        category: {
-          select: {
-            name: true
-          }
-        },
-        tags: {
-          select: {
-            name: true
-          }
+        where,
+        include: {
+            category: {
+            select: {
+                name: true
+            }
+            },
+            tags: {
+            select: {
+                name: true
+            }
+            }
         }
-      }
     });
     res.json({
       posts
