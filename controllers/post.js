@@ -91,8 +91,34 @@ const index = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+    try{
+        const { slug } = req.params;
+        
+       const postRicevuto= req.body;
+
+       if(postRicevuto.title){
+        const posts = await prisma.post.findMany();
+        const newSlug = generateSlug(postRicevuto.title, posts);
+        postRicevuto.slug=newSlug;
+       }
+        
+        
+        
+        const post = await prisma.post.update({
+          where: { slug },
+          data: postRicevuto,
+        });
+        res.json(post);
+    }catch(err){
+        console.error(err);
+        res.status(500).send('Errore del server');
+    }
+  }
+
 module.exports = {
   store,
   show,
-  index
+  index,
+  update
 };
