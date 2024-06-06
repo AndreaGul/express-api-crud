@@ -1,8 +1,9 @@
 const slugify = require('slugify');
 
 
-const generateSlug= (name,slugs)=>{
+const generateSlug= (name,posts)=>{
     baseSlug= slugify(name, { replacement: '-', lower: true, strict: true });
+  
     slugs = posts.map(post => post.slug);
     let counter = 1;
     let slug = baseSlug;
@@ -12,8 +13,6 @@ const generateSlug= (name,slugs)=>{
     }
     return slug
   }
-  
-
   module.exports ={
     generateSlug,
   }
