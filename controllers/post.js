@@ -128,11 +128,18 @@ const update = async (req, res) => {
   }
 
   const destroy = async (req, res) => {
+    try
+    {
     const { slug } = req.params;
     await prisma.post.delete({
       where: { slug },
     });
     res.json(`Post con slug ${slug} eliminato con successo`);
+    }
+    catch(err){
+      console.error(err);
+      res.status(500).send('Errore del server');
+  }
   }
 
 module.exports = {
